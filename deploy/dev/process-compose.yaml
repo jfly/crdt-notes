@@ -9,3 +9,20 @@ processes:
     command: cd ../../services/identity && npm run start
   notes:
     command: cd ../../services/notes/notes-service && npm run start
+  prometheus:
+    command: prometheus --config.file=./prometheus.yml --storage.tsdb.path=/tmp/prometheus
+  grafana:
+    command: grafana server
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      # - GF_PATHS_HOME=./grafana
+      # - GF_PATHS_DATA=/tmp/grafana
+      # - GF_PATHS_LOGS=/tmp/grafana/logs
+      # - GF_PATHS_PLUGINS=/tmp/grafana/plugins
+      # - GF_PATHS_PROVISIONING=/tmp/grafana/provisioning
+  # loki:
+  #   command: loki -config.file=./loki-config.yaml
+  # node_exporter:
+  #   command: node_exporter --path.procfs=/proc --path.sysfs=/sys --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)

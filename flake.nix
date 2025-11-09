@@ -12,6 +12,10 @@
         pkgs.process-compose
         pkgs.caddy
         pkgs.git
+        pkgs.prometheus
+        pkgs.grafana
+        pkgs.grafana-loki
+        pkgs.prometheus-node-exporter
       ];
     };
   };
