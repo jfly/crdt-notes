@@ -11,6 +11,7 @@
         pkgs.nodejs
         pkgs.process-compose
         pkgs.caddy
+        pkgs.git
       ];
     };
   };

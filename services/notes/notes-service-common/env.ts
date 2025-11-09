@@ -32,8 +32,7 @@ export interface NotesServiceCommonEnvSchema {
    * The environment of the deployment. Generally should avoid using this, consider its use deprecated, prefer instead more specific environment variables.
    */
   NODE_ENV: "development" | "production" | "test";
-  NOTES_SERVICE_HOST: string;
-  NOTES_SERVICE_HTTP_PORT: string;
+  NOTES_SERVICE_HTTP_HOST: string;
   /**
    * The protocol of the deployment, e.g. 'https'
    */
@@ -55,4 +54,6 @@ export interface NotesServiceCommonEnvSchema {
 /**
  * `process.env` casted to the `NotesServiceCommonEnvSchema` type.
  */
-export const typedEnv = (globalThis.process ? process.env : {}) as unknown as NotesServiceCommonEnvSchema;
+export const typedEnv = (globalThis.process
+  ? process.env
+  : {}) as unknown as NotesServiceCommonEnvSchema;
