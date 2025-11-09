@@ -25,7 +25,7 @@ processes:
       
       # Provisioning configs (dashboards, datasources) - persist locally
       - GF_PATHS_PROVISIONING=./grafana/provisioning
-  # loki:
-  #   command: loki -config.file=./loki-config.yaml
-  # node_exporter:
-  #   command: node_exporter --path.procfs=/proc --path.sysfs=/sys --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)
+  loki:
+    command: loki -config.file=./loki/loki-config.yaml
+  node_exporter:
+    command: node_exporter --path.procfs=/proc --path.sysfs=/sys --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)
