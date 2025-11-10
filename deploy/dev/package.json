@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "process-compose up -f process-compose.yaml -e .env.dev",
-    "dev:monitoring": "process-compose up -f process-compose.yaml -f process-compose.monitoring.yaml -e .env.dev",
+    "dev:with-monitoring": "process-compose up -f process-compose.yaml -f process-compose.monitoring.yaml -e .env.dev",
     "dev:monitoring-only": "process-compose up -f process-compose.monitoring.yaml -e .env.dev"
   },
   "dependencies": {
