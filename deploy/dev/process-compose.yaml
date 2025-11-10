@@ -10,9 +10,14 @@ processes:
   notes:
     command: cd ../../services/notes/notes-service && npm run start
   prometheus:
-    command: sh -c 'prometheus --config.file=./prometheus/prometheus.yml --storage.tsdb.path=/tmp/prometheus --web.listen-address="${PROMETHEUS_HOST}"'
+    command: sh -c 'PROMETHEUS_HOST="${PROMETHEUS_HOST:-localhost:9090}"; LOKI_HOST="${LOKI_HOST:-127.0.0.1}"; LOKI_PORT="${LOKI_PORT:-3100}"; CADDY_METRICS_HOST="${CADDY_METRICS_HOST:-localhost:2020}"; IDENTITY_SERVICE_HTTP_HOST="${IDENTITY_SERVICE_HTTP_HOST:-localhost:3000}"; NODE_EXPORTER_HOST="${NODE_EXPORTER_HOST:-localhost:9100}"; export PROMETHEUS_HOST LOKI_HOST LOKI_PORT CADDY_METRICS_HOST IDENTITY_SERVICE_HTTP_HOST NODE_EXPORTER_HOST; envsubst < ./prometheus/prometheus.yml > /tmp/prometheus.yml && prometheus --config.file=/tmp/prometheus.yml --storage.tsdb.path=/tmp/prometheus --web.listen-address="${PROMETHEUS_HOST}"'
     environment:
       - PROMETHEUS_HOST=${PROMETHEUS_HOST:-localhost:9090}
+      - LOKI_HOST=${LOKI_HOST:-127.0.0.1}
+      - LOKI_PORT=${LOKI_PORT:-3100}
+      - CADDY_METRICS_HOST=${CADDY_METRICS_HOST:-localhost:2020}
+      - IDENTITY_SERVICE_HTTP_HOST=${IDENTITY_SERVICE_HTTP_HOST:-localhost:3000}
+      - NODE_EXPORTER_HOST=${NODE_EXPORTER_HOST:-localhost:9100}
   grafana:
     command: sh -c 'GRAFANA_BIN=$(which grafana); GRAFANA_STORE=$(dirname $(dirname "$GRAFANA_BIN")); GF_SERVER_HTTP_ADDR=$${GRAFANA_HOST%%:*} GF_SERVER_HTTP_PORT=$${GRAFANA_HOST##*:} grafana server --homepath="$GRAFANA_STORE/share/grafana"'
     environment:
