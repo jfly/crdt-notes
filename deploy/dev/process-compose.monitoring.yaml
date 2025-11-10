@@ -7,17 +7,9 @@ processes:
 
   # Find nix install to set homepath
   grafana:
-    command: sh -c 'GRAFANA_BIN=$(which grafana); GRAFANA_STORE=$(dirname $(dirname "$GRAFANA_BIN")); GF_SERVER_HTTP_ADDR=$${GRAFANA_HOST%%:*} GF_SERVER_HTTP_PORT=$${GRAFANA_HOST##*:} grafana server --homepath="$GRAFANA_STORE/share/grafana"'
+    command: sh -c 'GRAFANA_BIN=$(which grafana); GRAFANA_STORE=$(dirname $(dirname "$GRAFANA_BIN")); GF_SERVER_HTTP_ADDR=$${GRAFANA_HOST%%:*} GF_SERVER_HTTP_PORT=$${GRAFANA_HOST##*:} grafana server --homepath="$GRAFANA_STORE/share/grafana" --config=./grafana/grafana.ini'
     environment:
-      - GRAFANA_HOST=${GRAFANA_HOST:-localhost:3000}
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-      - GF_AUTH_DISABLE_LOGIN_FORM=true
-
-      # Need to provide paths; default paths are read-only
-      - GF_PATHS_DATA=/tmp/grafana
-      - GF_PATHS_LOGS=/tmp/grafana/logs
-      - GF_PATHS_PLUGINS=/tmp/grafana/plugins
+      - GRAFANA_HOST=${GRAFANA_HOST}
       
   loki:
     command: loki -config.file=./loki/loki-config.yaml -server.http-listen-address="${LOKI_HOSTNAME}" -server.http-listen-port="${LOKI_PORT}"
