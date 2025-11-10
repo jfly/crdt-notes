@@ -10,10 +10,13 @@ processes:
   notes:
     command: cd ../../services/notes/notes-service && npm run start
   prometheus:
-    command: prometheus --config.file=./prometheus/prometheus.yml --storage.tsdb.path=/tmp/prometheus
-  grafana:
-    command: sh -c 'GRAFANA_BIN=$(which grafana); GRAFANA_STORE=$(dirname $(dirname "$GRAFANA_BIN")); grafana server --homepath="$GRAFANA_STORE/share/grafana"'
+    command: sh -c 'prometheus --config.file=./prometheus/prometheus.yml --storage.tsdb.path=/tmp/prometheus --web.listen-address="${PROMETHEUS_HOST}"'
     environment:
+      - PROMETHEUS_HOST=${PROMETHEUS_HOST:-localhost:9090}
+  grafana:
+    command: sh -c 'GRAFANA_BIN=$(which grafana); GRAFANA_STORE=$(dirname $(dirname "$GRAFANA_BIN")); GF_SERVER_HTTP_ADDR=$${GRAFANA_HOST%%:*} GF_SERVER_HTTP_PORT=$${GRAFANA_HOST##*:} grafana server --homepath="$GRAFANA_STORE/share/grafana"'
+    environment:
+      - GRAFANA_HOST=${GRAFANA_HOST:-localhost:3000}
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_AUTH_DISABLE_LOGIN_FORM=true
@@ -26,6 +29,10 @@ processes:
       # Provisioning configs (dashboards, datasources) - persist locally
       - GF_PATHS_PROVISIONING=./grafana/provisioning
   loki:
-    command: loki -config.file=./loki/loki-config.yaml
+    command: sh -c 'LOKI_ADDR=$${LOKI_HOST%%:*} LOKI_PORT=$${LOKI_HOST##*:} loki -config.file=./loki/loki-config.yaml -server.http-listen-address="$$LOKI_ADDR" -server.http-listen-port=$$LOKI_PORT'
+    environment:
+      - LOKI_HOST=${LOKI_HOST:-localhost:3100}
   node_exporter:
-    command: node_exporter --path.procfs=/proc --path.sysfs=/sys --collector.filesystem.mount-points-exclude='^/(sys|proc|dev|host|etc)($|/)'
+    command: sh -c 'node_exporter --path.procfs=/proc --path.sysfs=/sys --collector.filesystem.mount-points-exclude='\''^/(sys|proc|dev|host|etc)($|/)'\'' --web.listen-address="${NODE_EXPORTER_HOST}"'
+    environment:
+      - NODE_EXPORTER_HOST=${NODE_EXPORTER_HOST:-localhost:9100}
