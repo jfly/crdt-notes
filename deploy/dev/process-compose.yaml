@@ -10,14 +10,7 @@ processes:
   notes:
     command: cd ../../services/notes/notes-service && npm run start
   prometheus:
-    command: sh -c 'PROMETHEUS_HOST="${PROMETHEUS_HOST:-localhost:9090}"; LOKI_HOST="${LOKI_HOST:-127.0.0.1}"; LOKI_PORT="${LOKI_PORT:-3100}"; CADDY_METRICS_HOST="${CADDY_METRICS_HOST:-localhost:2020}"; IDENTITY_SERVICE_HTTP_HOST="${IDENTITY_SERVICE_HTTP_HOST:-localhost:3000}"; NODE_EXPORTER_HOST="${NODE_EXPORTER_HOST:-localhost:9100}"; export PROMETHEUS_HOST LOKI_HOST LOKI_PORT CADDY_METRICS_HOST IDENTITY_SERVICE_HTTP_HOST NODE_EXPORTER_HOST; envsubst < ./prometheus/prometheus.yml > /tmp/prometheus.yml && prometheus --config.file=/tmp/prometheus.yml --storage.tsdb.path=/tmp/prometheus --web.listen-address="${PROMETHEUS_HOST}"'
-    environment:
-      - PROMETHEUS_HOST=${PROMETHEUS_HOST:-localhost:9090}
-      - LOKI_HOST=${LOKI_HOST:-127.0.0.1}
-      - LOKI_PORT=${LOKI_PORT:-3100}
-      - CADDY_METRICS_HOST=${CADDY_METRICS_HOST:-localhost:2020}
-      - IDENTITY_SERVICE_HTTP_HOST=${IDENTITY_SERVICE_HTTP_HOST:-localhost:3000}
-      - NODE_EXPORTER_HOST=${NODE_EXPORTER_HOST:-localhost:9100}
+    command: sh -c 'envsubst < ./prometheus/prometheus.yml > /tmp/prometheus.yml && prometheus --config.file=/tmp/prometheus.yml --storage.tsdb.path=/tmp/prometheus --web.listen-address="${PROMETHEUS_HOST}"'
   grafana:
     command: sh -c 'GRAFANA_BIN=$(which grafana); GRAFANA_STORE=$(dirname $(dirname "$GRAFANA_BIN")); GF_SERVER_HTTP_ADDR=$${GRAFANA_HOST%%:*} GF_SERVER_HTTP_PORT=$${GRAFANA_HOST##*:} grafana server --homepath="$GRAFANA_STORE/share/grafana"'
     environment:
@@ -34,11 +27,6 @@ processes:
       # Provisioning configs (dashboards, datasources) - persist locally
       - GF_PATHS_PROVISIONING=./grafana/provisioning
   loki:
-    command: loki -config.file=./loki/loki-config.yaml -server.http-listen-address="${LOKI_HOST:-127.0.0.1}" -server.http-listen-port="${LOKI_PORT:-3100}"
-    environment:
-      - LOKI_HOST=${LOKI_HOST:-127.0.0.1}
-      - LOKI_PORT=${LOKI_PORT:-3100}
+    command: loki -config.file=./loki/loki-config.yaml -server.http-listen-address="${LOKI_HOSTNAME}" -server.http-listen-port="${LOKI_PORT}"
   node_exporter:
     command: sh -c 'node_exporter --path.procfs=/proc --path.sysfs=/sys --collector.filesystem.mount-points-exclude='\''^/(sys|proc|dev|host|etc)($|/)'\'' --web.listen-address="${NODE_EXPORTER_HOST}"'
-    environment:
-      - NODE_EXPORTER_HOST=${NODE_EXPORTER_HOST:-localhost:9100}
