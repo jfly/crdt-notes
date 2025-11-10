@@ -21,6 +21,11 @@ scrape_configs:
     static_configs:
       - targets: ["$IDENTITY_SERVICE_HTTP_HOST"]
 
+  - job_name: "notes"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["$NOTES_SERVICE_HTTP_HOST"]
+
   - job_name: "node-exporter"
     static_configs:
       - targets: ["$NODE_EXPORTER_HOST"]
