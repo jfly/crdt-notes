@@ -17,11 +17,11 @@ import common.Caddyfile
 }
 
 {$PROTOCOL}://grafana.{$DOMAIN} {
-	import admin-proxy {$IDENTITY_SERVICE_HTTP_HOST} {GRAFANA_HOST}
+	import admin-proxy {$IDENTITY_SERVICE_HTTP_HOST} {$GRAFANA_HOST}
 }
 
 {$PROTOCOL}://prometheus.{$DOMAIN} {
-	import admin-proxy {$IDENTITY_SERVICE_HTTP_HOST} {PROMETHEUS_HOST}
+	import admin-proxy {$IDENTITY_SERVICE_HTTP_HOST} {$PROMETHEUS_HOST}
 }
 
 {$PROTOCOL}://identity.{$DOMAIN} {
