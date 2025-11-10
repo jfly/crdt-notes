@@ -18,12 +18,12 @@ processes:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_AUTH_DISABLE_LOGIN_FORM=true
-      
+
       # Safe to clean up these
       - GF_PATHS_DATA=/tmp/grafana
       - GF_PATHS_LOGS=/tmp/grafana/logs
       - GF_PATHS_PLUGINS=/tmp/grafana/plugins
-      
+
       # Provisioning configs (dashboards, datasources) - persist locally
       - GF_PATHS_PROVISIONING=./grafana/provisioning
   loki:

@@ -5,7 +5,9 @@
 
     <router-link :to="`/note/${docQuery.data}`">View Note</router-link>
     <hr class="my-4" />
-    <p v-if="profileQuery.data.value?.email">Logged in as {{ profileQuery.data.value.email }}</p>
+    <p v-if="profileQuery.data.value?.email">
+      Logged in as {{ profileQuery.data.value.email }}
+    </p>
   </v-container>
 </template>
 

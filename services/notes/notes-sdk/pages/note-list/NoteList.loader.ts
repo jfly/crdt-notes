@@ -1,6 +1,6 @@
 import type { LoaderQuery } from "@saflib/vue";
 import { ref } from "vue";
-import { getProfile } from "@saflib/auth"
+import { getProfile } from "@saflib/auth";
 import { useQuery } from "@tanstack/vue-query";
 
 export function useNoteListLoader() {

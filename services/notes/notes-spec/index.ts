@@ -10,8 +10,7 @@ import {
 /**
  * For typing Express responses for template-service API routes.
  */
-export type NotesServiceResponseBody =
-  ExtractResponseBody<operations>;
+export type NotesServiceResponseBody = ExtractResponseBody<operations>;
 
 /**
  * For typing Express requests for template-service API routes.

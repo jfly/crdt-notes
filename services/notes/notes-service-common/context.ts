@@ -6,8 +6,7 @@ export interface NotesServiceContext {
   notesDbKey: DbKey;
 }
 
-export const notesServiceStorage =
-  new AsyncLocalStorage<NotesServiceContext>();
+export const notesServiceStorage = new AsyncLocalStorage<NotesServiceContext>();
 
 export interface NotesServiceContextOptions {
   notesDbKey?: DbKey;

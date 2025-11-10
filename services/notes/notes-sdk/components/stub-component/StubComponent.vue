@@ -21,11 +21,7 @@
         {{ getTanstackErrorMessage(error) }}
       </v-alert>
 
-      <v-alert
-        type="info"
-      >
-        Yooooooo
-      </v-alert>
+      <v-alert type="info"> Yooooooo </v-alert>
     </v-card-text>
   </v-card>
 </template>
