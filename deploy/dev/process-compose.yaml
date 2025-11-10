@@ -28,4 +28,4 @@ processes:
   loki:
     command: loki -config.file=./loki/loki-config.yaml
   node_exporter:
-    command: node_exporter --path.procfs=/proc --path.sysfs=/sys --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)
+    command: node_exporter --path.procfs=/proc --path.sysfs=/sys --collector.filesystem.mount-points-exclude='^/(sys|proc|dev|host|etc)($|/)'
