@@ -3,10 +3,22 @@
   "description": "Docker compose setup for dev environment",
   "type": "module",
   "scripts": {
-    "dev": "process-compose up -f process-compose.yaml -e .env.dev",
-    "dev:with-monitoring": "process-compose up -f process-compose.yaml -f process-compose.monitoring.yaml -e .env.dev"
+    "dev": "concurrently -n caddy,clients,identity,notes -c blue,green,yellow,magenta \"npm run scripts:core:caddy\" \"npm run scripts:core:clients\" \"npm run scripts:core:identity\" \"npm run scripts:core:notes\"",
+    "dev:with-monitoring": "concurrently -n caddy,clients,identity,notes,prometheus,grafana,loki,node_exporter -c blue,green,yellow,magenta,cyan,red,white,gray \"npm run scripts:core:caddy\" \"npm run scripts:core:clients\" \"npm run scripts:core:identity\" \"npm run scripts:core:notes\" \"npm run scripts:monitoring:prometheus\" \"npm run scripts:monitoring:grafana\" \"npm run scripts:monitoring:loki\" \"npm run scripts:monitoring:node_exporter\"",
+    "scripts:core:caddy": "dotenv -e env.dev -- caddy run --config ./caddy/Caddyfile",
+    "scripts:core:clients": "dotenv -e env.dev -- sh -c 'cd ../../clients/spas && npm run dev'",
+    "scripts:core:identity": "dotenv -e env.dev -- sh -c 'cd ../../services/identity && npm run start'",
+    "scripts:core:notes": "dotenv -e env.dev -- sh -c 'cd ../../services/notes/notes-service && npm run start'",
+    "scripts:monitoring:prometheus": "dotenv -e env.dev -- sh -c 'envsubst < ./prometheus/prometheus.yml > ./prometheus/prometheus.yml.actual && prometheus --config.file=./prometheus/prometheus.yml.actual --storage.tsdb.path=./prometheus/tmp --web.listen-address=\"${PROMETHEUS_HOST}\"'",
+    "scripts:monitoring:grafana": "dotenv -e env.dev -- sh -c 'GRAFANA_BIN=$(which grafana); GRAFANA_STORE=$(dirname $(dirname \"$GRAFANA_BIN\")); GF_SERVER_HTTP_ADDR=${GRAFANA_HOST%%:*} GF_SERVER_HTTP_PORT=${GRAFANA_HOST##*:} grafana server --homepath=\"$GRAFANA_STORE/share/grafana\" --config=./grafana/grafana.ini'",
+    "scripts:monitoring:loki": "dotenv -e env.dev -- loki -config.file=./loki/loki-config.yaml -server.http-listen-address=\"${LOKI_HOSTNAME}\" -server.http-listen-port=\"${LOKI_PORT}\"",
+    "scripts:monitoring:node_exporter": "dotenv -e env.dev -- sh -c 'node_exporter --path.procfs=/proc --path.sysfs=/sys --collector.filesystem.mount-points-exclude='\\''^/(sys|proc|dev|host|etc)($|/)'\\'' --web.listen-address=\"${NODE_EXPORTER_HOST}\"'"
   },
   "dependencies": {
     "@saflib/dev-tools": "*"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "dotenv-cli": "^7.4.2"
   }
 }
