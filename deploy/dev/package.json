@@ -10,7 +10,6 @@
     "@saflib/dev-tools": "*"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2",
-    "dotenv-cli": "^7.4.2"
+    "concurrently": "^9.1.2"
   }
 }
