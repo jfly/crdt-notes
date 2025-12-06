@@ -3,10 +3,13 @@
   "description": "Docker compose setup for dev environment",
   "type": "module",
   "scripts": {
-    "dev": "process-compose up -f process-compose.yaml -e .env.dev",
-    "dev:with-monitoring": "process-compose up -f process-compose.yaml -f process-compose.monitoring.yaml -e .env.dev"
+    "dev": "concurrently -n caddy,clients,identity,notes -c blue,green,yellow,magenta \"./scripts/core/caddy.sh\" \"./scripts/core/clients.sh\" \"./scripts/core/identity.sh\" \"./scripts/core/notes.sh\"",
+    "dev:with-monitoring": "concurrently -n caddy,clients,identity,notes,prometheus,grafana,loki,node_exporter -c blue,green,yellow,magenta,cyan,red,white,gray \"./scripts/core/caddy.sh\" \"./scripts/core/clients.sh\" \"./scripts/core/identity.sh\" \"./scripts/core/notes.sh\" \"./scripts/monitoring/prometheus.sh\" \"./scripts/monitoring/grafana.sh\" \"./scripts/monitoring/loki.sh\" \"./scripts/monitoring/node_exporter.sh\""
   },
   "dependencies": {
     "@saflib/dev-tools": "*"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }
