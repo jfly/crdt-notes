@@ -1,0 +1,29 @@
+import common.Caddyfile 
+
+{$PROTOCOL}://{$DOMAIN} {
+	reverse_proxy localhost:5173
+}
+
+{$PROTOCOL}://app.{$DOMAIN} {
+	reverse_proxy localhost:5173
+}
+
+{$PROTOCOL}://auth.{$DOMAIN} {
+	reverse_proxy localhost:5173
+}
+
+{$PROTOCOL}://notes.{$DOMAIN} {
+	reverse_proxy {$NOTES_SERVICE_HTTP_HOST}
+}
+
+{$PROTOCOL}://grafana.{$DOMAIN} {
+	import admin-proxy {$IDENTITY_SERVICE_HTTP_HOST} {$GRAFANA_HOST}
+}
+
+{$PROTOCOL}://prometheus.{$DOMAIN} {
+	import admin-proxy {$IDENTITY_SERVICE_HTTP_HOST} {$PROMETHEUS_HOST}
+}
+
+{$PROTOCOL}://identity.{$DOMAIN} {
+	import identity {$DOMAIN} {$IDENTITY_SERVICE_HTTP_HOST}
+}

@@ -1,0 +1,11 @@
+version: "0.5"
+
+processes:
+  caddy:
+    command: caddy run --config ./caddy/Caddyfile
+  clients:
+    command: cd ../../clients/spas && npm run dev
+  identity:
+    command: cd ../../services/identity && npm run start
+  notes:
+    command: cd ../../services/notes/notes-service && npm run start

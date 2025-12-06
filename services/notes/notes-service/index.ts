@@ -17,7 +17,10 @@ export function startNotesService() {
     log.info("Starting notes-http...");
     const expressApp = createNotesHttpApp(context);
     startExpressServer(expressApp, {
-      port: parseInt(typedEnv.NOTES_SERVICE_HTTP_PORT || "3000", 10),
+      port: parseInt(
+        typedEnv.NOTES_SERVICE_HTTP_HOST.split(":")[1] || "3000",
+        10,
+      ),
     });
     log.info("notes-http startup complete.");
   } catch (error) {

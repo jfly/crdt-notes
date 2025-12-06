@@ -4,6 +4,10 @@
     <p>{{ t(strings.description) }}</p>
 
     <router-link :to="`/note/${docQuery.data}`">View Note</router-link>
+    <hr class="my-4" />
+    <p v-if="profileQuery.data.value?.email">
+      Logged in as {{ profileQuery.data.value.email }}
+    </p>
   </v-container>
 </template>
 
@@ -11,7 +15,7 @@
 import { note_list_page as strings } from "./NoteList.strings";
 import { useReverseT } from "../../i18n.ts";
 import { useNoteListLoader } from "./NoteList.loader.ts";
-const { docQuery } = useNoteListLoader();
+const { docQuery, profileQuery } = useNoteListLoader();
 
 const { t } = useReverseT();
 </script>

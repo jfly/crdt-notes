@@ -3,13 +3,32 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, nixpkgs }: {
-    devShells.aarch64-darwin.default = let
-      pkgs = nixpkgs.legacyPackages.aarch64-darwin;
-    in pkgs.mkShell {
-      packages = [
-        pkgs.nodejs
-      ];
+  outputs =
+    { self, nixpkgs }:
+    let
+      inherit (nixpkgs) lib;
+      eachSupportedSystem = lib.genAttrs lib.systems.flakeExposed;
+    in
+    {
+      devShells = eachSupportedSystem (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          default = pkgs.mkShell {
+            packages = [
+              pkgs.nodejs
+              pkgs.process-compose
+              pkgs.caddy
+              pkgs.git
+              pkgs.prometheus
+              pkgs.grafana
+              pkgs.grafana-loki
+              pkgs.prometheus-node-exporter
+            ];
+          };
+        }
+      );
     };
-  };
 }

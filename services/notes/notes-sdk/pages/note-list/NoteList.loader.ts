@@ -1,5 +1,7 @@
 import type { LoaderQuery } from "@saflib/vue";
 import { ref } from "vue";
+import { getProfile } from "@saflib/auth";
+import { useQuery } from "@tanstack/vue-query";
 
 export function useNoteListLoader() {
   let firstNoteId = localStorage.getItem("first-note");
@@ -21,5 +23,5 @@ export function useNoteListLoader() {
     data: firstNoteId,
   };
 
-  return { docQuery };
+  return { docQuery, profileQuery: useQuery(getProfile()) };
 }

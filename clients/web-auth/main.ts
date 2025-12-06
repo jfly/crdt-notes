@@ -1,4 +1,5 @@
-import { createVueApp, setClientName } from "@saflib/vue";
+import { createVueApp } from "@saflib/vue";
+import { setClientName } from "@saflib/links";
 import App from "./AuthApp.vue";
 import { vuetifyConfig } from "web-common";
 import { createAuthRouter } from "./router";

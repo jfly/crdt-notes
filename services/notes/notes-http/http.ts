@@ -9,9 +9,7 @@ import {
 /**
  * Creates the HTTP server for the notes service.
  */
-export function createNotesHttpApp(
-  options: NotesServiceContextOptions,
-) {
+export function createNotesHttpApp(options: NotesServiceContextOptions) {
   let dbKey = options.notesDbKey;
   if (!dbKey) {
     dbKey = notesDb.connect();

@@ -2,7 +2,7 @@
 import { getProfile } from "@saflib/auth";
 import { useQuery } from "@tanstack/vue-query";
 import { authLinks } from "@saflib/auth-links";
-import { linkToProps } from "@saflib/vue";
+import { linkToProps } from "@saflib/links";
 
 const { data: profile } = useQuery(getProfile());
 </script>

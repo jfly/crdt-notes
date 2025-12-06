@@ -35,8 +35,11 @@ export interface IdentityEnvSchema {
   /**
    * The port on which the gRPC server will listen, or the client will connect.
    */
-  IDENTITY_SERVICE_GRPC_PORT: string;
-  IDENTITY_SERVICE_HTTP_PORT: string;
+  IDENTITY_SERVICE_GRPC_HOST: string;
+  /**
+   * Host URL for the identity service
+   */
+  IDENTITY_SERVICE_HTTP_HOST: string;
   /**
    * Whether to mock 3rd party integrations. Set to 'true' to mock. And integration packages should respect this setting.
    */
@@ -57,6 +60,10 @@ export interface IdentityEnvSchema {
    * Comma-separated list of service subdomains, e.g. 'revenue,geo,identity,core'.
    */
   SERVICE_SUBDOMAINS: string;
+  /**
+   * The trademark of the product provided at the domain, e.g. 'Hooli Chat'.
+   */
+  TRADEMARK?: string;
   /**
    * The timezone of the deployment, e.g. 'America/New_York'. Must be UTC.
    */

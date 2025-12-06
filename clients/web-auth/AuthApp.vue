@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { nav_logo } from "web-common";
-import { linkToHrefWithHost } from "@saflib/vue";
+import { linkToHrefWithHost } from "@saflib/links";
 
 const homeLink = linkToHrefWithHost({ subdomain: "", path: "/" });
 </script>

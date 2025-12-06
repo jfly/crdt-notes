@@ -1,0 +1,21 @@
+version: "0.5"
+
+processes:
+  # Use envsubst to have prometheus config based on env variables
+  prometheus:
+    command: sh -c 'envsubst < ./prometheus/prometheus.yml > ./prometheus/prometheus.yml.actual && prometheus --config.file=./prometheus/prometheus.yml.actual --storage.tsdb.path=./prometheus/tmp --web.listen-address="${PROMETHEUS_HOST}"'
+
+  # Find nix install to set homepath
+  grafana:
+    command: sh -c 'GRAFANA_BIN=$(which grafana); GRAFANA_STORE=$(dirname $(dirname "$GRAFANA_BIN")); GF_SERVER_HTTP_ADDR=$${GRAFANA_HOST%%:*} GF_SERVER_HTTP_PORT=$${GRAFANA_HOST##*:} grafana server --homepath="$GRAFANA_STORE/share/grafana" --config=./grafana/grafana.ini'
+    environment:
+      - GRAFANA_HOST=${GRAFANA_HOST}
+
+  loki:
+    command: loki -config.file=./loki/loki-config.yaml -server.http-listen-address="${LOKI_HOSTNAME}" -server.http-listen-port="${LOKI_PORT}"
+    shutdown:
+      # use an aggressive timeout; if you try to shut down soon after starting, loki will often hang.
+      timeout_seconds: 1
+
+  node_exporter:
+    command: sh -c 'node_exporter --path.procfs=/proc --path.sysfs=/sys --collector.filesystem.mount-points-exclude='\''^/(sys|proc|dev|host|etc)($|/)'\'' --web.listen-address="${NODE_EXPORTER_HOST}"'

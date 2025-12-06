@@ -7,8 +7,8 @@ http://caddy:2020 {
 # set the env variable DOMAIN_REDIRECTS. This snippet won't work unless
 # a domain is given so even if you don't want to redirect, you need to
 # set the env variable.
-{$DOMAIN_REDIRECTS} {
-	redir {$PROTOCOL}://{$DOMAIN}{uri} permanent
+(redirect) {
+	redir {$PROTOCOL}://{args[0]}{uri} permanent
 }
 
 # Caddy is the source of request IDs for API requests.
@@ -20,32 +20,13 @@ http://caddy:2020 {
 # Used for SPA clients accessible to all users
 (spa) {
 	encode gzip
-	root * /srv/spas
+	root * /srv{args[0]}
 	file_server {
 		pass_thru
 	}
 	@non-file expression path_regexp('^[^.]*$')
 	handle @non-file {
-		try_files {args[0]}
-	}
-}
-
-# Used for SPA clients accessible only to admins
-(admin-spa) {
-	encode gzip
-	root * /srv/spas
-
-	file_server {
-		pass_thru
-	}
-	@non-file expression path_regexp('^[^.]*$')
-	handle @non-file {
-		forward_auth identity:3000 {
-			uri /auth/verify?
-			header_up X-Csrf-Skip true
-			header_up X-Require-Admin {$BLOCK_ADMIN_PAGES}
-		}
-		try_files {args[0]}
+		try_files {args[1]}
 	}
 }
 
@@ -66,8 +47,8 @@ http://caddy:2020 {
 (admin-file-server) {
 	import cors
 	encode gzip
-	root * /srv{args[0]}
-	forward_auth identity:3000 {
+	root * /srv{args[1]}
+	forward_auth {args[0]} {
 		uri /auth/verify?
 		header_up X-Csrf-Skip true
 		header_up X-Require-Admin {$BLOCK_ADMIN_PAGES}
@@ -80,14 +61,16 @@ http://caddy:2020 {
 }
 
 # Used for API servers accessible to all users.
+# args[0]: identity service host (e.g. caller-identity:3000)
+# args[1]: target service host (e.g. caller:3000)
 (api-proxy) {
-	forward_auth identity:3000 {
+	forward_auth {args[0]} {
 		uri /auth/verify?
 		header_up X-Request-ID {http.request.uuid}
 		copy_headers X-User-ID X-User-Email X-User-Scopes X-User-Email-Verified
 		header_up X-Csrf-Token {http.request.header.X-CSRF-Token}
 	}
-	reverse_proxy {args[0]} {
+	reverse_proxy {args[1]} {
 		import reverse_proxy_common
 	}
 }
@@ -95,13 +78,13 @@ http://caddy:2020 {
 # Used for standalone services which provide their own UI, only accessible to admins,
 # such as Grafana and Prometheus.
 (admin-proxy) {
-	forward_auth identity:3000 {
+	forward_auth {args[0]} {
 		uri /auth/verify?
 		header_up X-Csrf-Skip true
 		header_up X-Require-Admin {$BLOCK_ADMIN_PAGES}
 	}
 
-	reverse_proxy {args[0]} {
+	reverse_proxy {args[1]} {
 		import reverse_proxy_common
 	}
 }
@@ -109,19 +92,22 @@ http://caddy:2020 {
 # ---- AUTH ----
 
 # Other subdomains depend on identity verifying users have access to subdomains (via forward_auth)
-{$PROTOCOL}://identity.{$DOMAIN} {
+# args[0]: domain (e.g. familycaller.com)
+# args[1]: identity service host (e.g. caller-identity:3000)
+(identity) {
 	@identity {
-		host identity.{$DOMAIN}
+		host identity.{args[0]}
 		path /auth*
 	}
 
 	# auth routes do not go through the "verify" endpoint; they manage their own access
 	handle @identity {
-		reverse_proxy identity:3000 {
+		reverse_proxy {args[1]} {
 			import reverse_proxy_common
 		}
 	}
 
 	# all other routes, such as "/users", go through the "verify" endpoint
-	import api-proxy identity:3000
+	# since the identity service is the same as the target service, we can use the same host
+	import api-proxy {args[1]} {args[1]}
 }
