@@ -1,1 +1,3 @@
 .env
+prometheus/tmp
+prometheus/prometheus.yml.actual
